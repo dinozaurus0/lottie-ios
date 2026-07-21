@@ -92,7 +92,7 @@ final class PerformanceTests: XCTestCase {
     }
   }
 
-  func testCoreAnimationRendererPerformance_animationIntensive() throws {
+  func testCoreAnimationRendererPerformance_mainVsWorkerThread() throws {
     let animation = try XCTUnwrap(LottieAnimation.named(
       "one_circle",
       bundle: .lottie,
@@ -185,6 +185,7 @@ final class PerformanceTests: XCTestCase {
     )
 
     // might need to remove existing layer hierarchy before calling `display()` again.
+      // Does not seem to be problematic
     return measurePerformance {
       for _ in 0..<iterations {
         animationView.animationLayer!.display()
