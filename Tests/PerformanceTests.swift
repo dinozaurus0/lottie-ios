@@ -92,6 +92,21 @@ final class PerformanceTests: XCTestCase {
     }
   }
 
+  func testCoreAnimationRendererPerformance_animationIntensive() throws {
+    let animation = try XCTUnwrap(LottieAnimation.named(
+      "one_circle",
+      bundle: .lottie,
+      subdirectory: "Samples/LottieFiles"
+    ))
+      
+    let _ = compareCoreAnimationRendererPerformanceMainVsWorkerThread(
+      for: animation,
+      iterations: 1_000
+    )
+      
+    // This should be the assert
+  }
+
   override func setUp() {
     TestHelpers.performanceTestsAreRunning = true
   }
@@ -156,6 +171,25 @@ final class PerformanceTests: XCTestCase {
 
     /// The view / layer is deallocated when the transaction is flushed
     CATransaction.flush()
+  }
+
+  private func compareCoreAnimationRendererPerformanceMainVsWorkerThread(
+    for animation: LottieAnimation,
+    iterations: Int
+  ) -> Double {
+    let animationView = setupAnimationView(
+      with: animation,
+      configuration: .init(
+        renderingEngine: .coreAnimation
+      )
+    )
+
+    // might need to remove existing layer hierarchy before calling `display()` again.
+    return measurePerformance {
+      for _ in 0..<iterations {
+        animationView.animationLayer!.display()
+      }
+    }
   }
 
   /// Compares performance of scrubbing the given animation with both the Main Thread and Core Animation engine,
