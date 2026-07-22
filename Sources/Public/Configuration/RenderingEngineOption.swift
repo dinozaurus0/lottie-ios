@@ -31,7 +31,11 @@ public enum RenderingEngineOption: Hashable {
   ///    Lottie will automatically fall back to the Main Thread engine
   ///    when necessary.
   public static var coreAnimation: RenderingEngineOption {
-    .specific(.coreAnimation())
+    .specific(.coreAnimation(.main))
+  }
+
+  public static var coreAnimationBackground: RenderingEngineOption {
+    .specific(.coreAnimation(.background))
   }
 }
 

@@ -98,13 +98,8 @@ final class PerformanceTests: XCTestCase {
       bundle: .lottie,
       subdirectory: "Samples/LottieFiles"
     ))
-      
-    let _ = compareCoreAnimationRendererPerformanceMainVsWorkerThread(
-      for: animation,
-      iterations: 1_000
-    )
-      
-    // This should be the assert
+
+    let _ = compareCoreAnimationRendererPerformance(for: animation, iterations: 500)
   }
 
   override func setUp() {
@@ -173,23 +168,47 @@ final class PerformanceTests: XCTestCase {
     CATransaction.flush()
   }
 
-  private func compareCoreAnimationRendererPerformanceMainVsWorkerThread(
+  private func compareCoreAnimationRendererPerformance(
     for animation: LottieAnimation,
     iterations: Int
   ) -> Double {
-    let animationView = setupAnimationView(
-      with: animation,
-      configuration: .init(
-        renderingEngine: .coreAnimation
-      )
+    // Warm-up pass to avoid measuring one-time first-call setup costs
+    // (e.g. render server connection, cache population), which would
+    // otherwise make whichever configuration runs first look artificially
+    // slower.
+    measureRenderingPerformance(of: .coreAnimation, for: animation, iterations: 1)
+
+    let mainThreadEnginePerformance = measureRenderingPerformance(
+      of: .coreAnimation,
+      for: animation,
+      iterations: iterations
     )
 
-    // might need to remove existing layer hierarchy before calling `display()` again.
-      // Does not seem to be problematic
+    let workerThreadEnginePerformance = measureRenderingPerformance(
+      of: .coreAnimationBackground,
+      for: animation,
+      iterations: iterations
+    )
+
+    print(mainThreadEnginePerformance)
+    print(workerThreadEnginePerformance)
+
+    return 0.0
+  }
+
+  @discardableResult
+  private func measureRenderingPerformance(
+    of engine: RenderingEngineOption,
+    for animation: LottieAnimation,
+    iterations: Int
+  ) -> Double {
+    let view = setupAnimationView(
+      with: animation,
+      configuration: .init(renderingEngine: engine)
+    )
+
     return measurePerformance {
-      for _ in 0..<iterations {
-        animationView.animationLayer!.display()
-      }
+      for _ in 0..<iterations { view.animationLayer!.display() }
     }
   }
 
