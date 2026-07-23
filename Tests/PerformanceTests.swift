@@ -93,13 +93,22 @@ final class PerformanceTests: XCTestCase {
   }
 
   func testCoreAnimationRendererPerformance_mainVsWorkerThread() throws {
+    let expectation = XCTestExpectation(description: "Core Animation Renderer Performance")
     let animation = try XCTUnwrap(LottieAnimation.named(
       "one_circle",
       bundle: .lottie,
       subdirectory: "Samples/LottieFiles"
     ))
 
-    let _ = compareCoreAnimationRendererPerformance(for: animation, iterations: 500)
+    compareCoreAnimationRendererPerformance(
+      for: animation,
+      iterations: 100,
+      result: { _ in
+        expectation.fulfill()
+      }
+    )
+
+    wait(for: [expectation])
   }
 
   override func setUp() {
@@ -170,32 +179,69 @@ final class PerformanceTests: XCTestCase {
 
   private func compareCoreAnimationRendererPerformance(
     for animation: LottieAnimation,
-    iterations: Int
-  ) -> Double {
+    iterations: Int,
+    result: @escaping (Double) -> Void
+  ) {
     // Warm-up pass to avoid measuring one-time first-call setup costs
     // (e.g. render server connection, cache population), which would
     // otherwise make whichever configuration runs first look artificially
     // slower.
     measureRenderingPerformance(of: .coreAnimation, for: animation, iterations: 1)
 
-    let mainThreadEnginePerformance = measureRenderingPerformance(
-      of: .coreAnimation,
+//    let mainThreadEnginePerformance = measureRenderingPerformance(
+//      of: .coreAnimation,
+//      for: animation,
+//      iterations: iterations
+//    )
+
+    measureCoreAnimationBackgroundThreadPerformance(
       for: animation,
-      iterations: iterations
+      iterations: iterations,
+      result: { performance in
+        print(performance)
+        result(0.0)
+      }
     )
-
-    let workerThreadEnginePerformance = measureRenderingPerformance(
-      of: .coreAnimationBackground,
-      for: animation,
-      iterations: iterations
-    )
-
-    print(mainThreadEnginePerformance)
-    print(workerThreadEnginePerformance)
-
-    return 0.0
   }
 
+  private func measureCoreAnimationBackgroundThreadPerformance(
+    for animation: LottieAnimation,
+    iterations: Int,
+    result: @escaping (Double) -> Void
+  ) {
+    Thread {
+      let performanceResult = self.measurePerformance {
+        for _ in 0..<iterations {
+          let view = self.setupAnimationView(
+            with: animation,
+            configuration: .init(renderingEngine: .coreAnimationBackground)
+          )
+          // Create a flag that tracks whether the main thread has finished
+          // setting up the animation for this iteration. It starts as `0`
+          // and is incremented by `1` by the main thread once setup completes.
+          DispatchQueue.main.setSpecific(
+            key: AnimationDispatchKeys.finishedSetupCount,
+            value: 0
+          )
+
+          view.animationLayer!.display()
+
+          // Busy-wait until the main thread signals that animation setup
+          // has finished for this iteration, so each `display()` call is
+          // only measured once its corresponding setup is fully complete.
+          var count = DispatchQueue.main.getSpecific(key: AnimationDispatchKeys.finishedSetupCount)
+          while count! < 1 {
+            count = DispatchQueue.main.getSpecific(key: AnimationDispatchKeys.finishedSetupCount)
+          }
+        }
+      }
+
+      result(performanceResult)
+    }
+    .start()
+  }
+
+  /// setupAnimationPerformance
   @discardableResult
   private func measureRenderingPerformance(
     of engine: RenderingEngineOption,
