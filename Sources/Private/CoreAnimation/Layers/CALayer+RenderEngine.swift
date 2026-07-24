@@ -17,9 +17,9 @@ extension CALayer {
   /// This is only meaningful when read from within the Core Animation
   /// renderer's execution path, since that's the only context in which it's
   /// set.
-  static var animationBuildThread: RenderingEngine.AnimationBuildThread? {
+  static var animationSetupThread: RenderingEngine.AnimationSetupThread? {
     get {
-      objc_getAssociatedObject(self, &animationThreadKey) as? RenderingEngine.AnimationBuildThread
+      objc_getAssociatedObject(self, &animationThreadKey) as? RenderingEngine.AnimationSetupThread
     }
     set {
       objc_setAssociatedObject(
@@ -34,6 +34,6 @@ extension CALayer {
   /// Whether the Core Animation renderer is currently configured to create
   /// its animation on a background thread, as opposed to the main thread.
   static var usesBackgroundThread: Bool {
-    animationBuildThread == .background
+    animationSetupThread == .background
   }
 }

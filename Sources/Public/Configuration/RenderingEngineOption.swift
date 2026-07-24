@@ -51,7 +51,7 @@ public enum RenderingEngine: Hashable {
   /// The Core Animation rendering engine, that animates using Core Animation
   /// and has better performance characteristics than the Main Thread engine,
   /// but doesn't support all Lottie features.
-  case coreAnimation(AnimationBuildThread = .main)
+  case coreAnimation(AnimationSetupThread = .main)
 }
 
 // MARK: RenderingEngine.AnimationBuildThread
@@ -60,7 +60,7 @@ public enum RenderingEngine: Hashable {
 /// animation on. The setup of the animation happens on the main thread
 /// regardless of this option.
 extension RenderingEngine {
-  public enum AnimationBuildThread: Hashable {
+  public enum AnimationSetupThread: Hashable {
     case main
     case background
   }
