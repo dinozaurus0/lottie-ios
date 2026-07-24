@@ -248,7 +248,6 @@ final class PerformanceTests: XCTestCase {
     iterations: Int
   ) -> Double {
     measurePerformance {
-
       let view = setupAnimationView(
         with: animation,
         configuration: .init(renderingEngine: engine)

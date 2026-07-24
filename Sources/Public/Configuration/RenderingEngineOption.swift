@@ -54,7 +54,7 @@ public enum RenderingEngine: Hashable {
   case coreAnimation(AnimationSetupThread = .main)
 }
 
-// MARK: RenderingEngine.AnimationBuildThread
+// MARK: RenderingEngine.AnimationSetupThread
 
 /// Describes which thread the Core Animation rendering engine creates its
 /// animation on. The setup of the animation happens on the main thread
