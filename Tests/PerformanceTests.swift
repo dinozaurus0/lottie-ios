@@ -241,19 +241,19 @@ final class PerformanceTests: XCTestCase {
     .start()
   }
 
-  /// setupAnimationPerformance
   @discardableResult
   private func measureRenderingPerformance(
     of engine: RenderingEngineOption,
     for animation: LottieAnimation,
     iterations: Int
   ) -> Double {
-    let view = setupAnimationView(
-      with: animation,
-      configuration: .init(renderingEngine: engine)
-    )
+    measurePerformance {
 
-    return measurePerformance {
+      let view = setupAnimationView(
+        with: animation,
+        configuration: .init(renderingEngine: engine)
+      )
+
       for _ in 0..<iterations { view.animationLayer!.display() }
     }
   }
