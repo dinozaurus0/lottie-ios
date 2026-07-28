@@ -2,7 +2,29 @@ import QuartzCore
 
 private var animationThreadKey: UInt8 = 0
 
+#if DEBUG
+private var backgroundAnimationSetupCompleteKey: UInt8 = 0
+#endif
+
 extension CALayer {
+
+  // MARK: Public
+
+  #if DEBUG
+  /// Test-only hook invoked whenever background-thread animation setup
+  /// completes. `nil` in normal app usage — has no effect unless a test
+  /// explicitly sets it to observe completion timing.
+  ///
+  /// Only available in DEBUG builds, since this exists purely to support
+  /// test instrumentation and should never ship in release builds.
+  public static var backgroundAnimationSetupComplete: (() -> Void)? {
+    get { objc_getAssociatedObject(self, &backgroundAnimationSetupCompleteKey) as? () -> Void }
+    set { objc_setAssociatedObject(self, &backgroundAnimationSetupCompleteKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+  }
+  #endif
+
+  // MARK: Internal
+
   /// Stores the Core Animation renderer's configured build thread at the type
   /// (class) level, rather than per-instance, so that any layer in a deeply
   /// nested Core Animation layer hierarchy can read this configuration without
@@ -36,4 +58,5 @@ extension CALayer {
   static var usesBackgroundThread: Bool {
     animationSetupThread == .background
   }
+
 }
