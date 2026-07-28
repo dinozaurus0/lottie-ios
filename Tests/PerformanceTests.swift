@@ -100,15 +100,18 @@ final class PerformanceTests: XCTestCase {
       subdirectory: "Samples/LottieFiles"
     ))
 
+    var actualResult: Double?
     compareCoreAnimationRendererPerformance(
       for: animation,
       iterations: 100,
-      result: { _ in
+      result: { result in
         expectation.fulfill()
+        actualResult = result
       }
     )
 
     wait(for: [expectation])
+    XCTAssertLessThanOrEqual(try XCTUnwrap(actualResult), 0.0)
   }
 
   override func setUp() {
@@ -194,7 +197,7 @@ final class PerformanceTests: XCTestCase {
       range: range
     )
 
-    let mainThreadEnginePerformance = measureRenderingPerformance(
+    let mainThreadPerformance = measureRenderingPerformance(
       for: animation,
       with: .init(renderingEngine: .coreAnimation),
       range: range
@@ -203,10 +206,8 @@ final class PerformanceTests: XCTestCase {
     measureCoreAnimationBackgroundPerformance(
       for: animation,
       range: range,
-      result: { performance in
-        print(mainThreadEnginePerformance)
-        print(performance)
-        result(0.0)
+      result: { backgroundThreadPerformance in
+        result(backgroundThreadPerformance - mainThreadPerformance)
       }
     )
   }
@@ -218,8 +219,8 @@ final class PerformanceTests: XCTestCase {
   ) {
     // We need to create them on the main thread, otherwise `UIKit` will complain about the fact that we modify an `UIView` backing layer from a thread different from the UI one.
     let views = setupAnimationViews(
-      for: range,
-      using: animation,
+      for: animation,
+      in: range,
       with: .init(renderingEngine: .coreAnimationBackground)
     )
 
@@ -260,8 +261,8 @@ final class PerformanceTests: XCTestCase {
     range: Range<Int>
   ) -> Double {
     let views = setupAnimationViews(
-      for: range,
-      using: animation,
+      for: animation,
+      in: range,
       with: configuration
     )
 
@@ -273,8 +274,8 @@ final class PerformanceTests: XCTestCase {
   }
 
   private func setupAnimationViews(
-    for range: Range<Int>,
-    using animation: LottieAnimation,
+    for animation: LottieAnimation,
+    in range: Range<Int>,
     with configuration: LottieConfiguration
   ) -> [LottieAnimationView] {
     range.map { _ in
