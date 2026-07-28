@@ -311,31 +311,28 @@ final class CoreAnimationLayer: BaseAnimationLayer {
   /// Sets up a placeholder `CABasicAnimation` that tracks the current
   /// progress of this animation (between 0 and 1). This lets us provide
   /// realtime animation progress via `self.currentFrame`.
-
-  /// move this first to background and measure
   private func setupPlaceholderAnimation(context: LayerAnimationContext) {
-    DispatchQueue.global().async {
-      let animationProgressTracker = CABasicAnimation(keyPath: #keyPath(animationProgress))
-      animationProgressTracker.fromValue = 0
-      animationProgressTracker.toValue = 1
-
-      let timedProgressAnimation = animationProgressTracker.timed(with: context, for: self)
-      timedProgressAnimation.delegate = self.currentAnimationConfiguration?.animationContext.closure
-
-      // Remove the progress animation once complete so we know when the animation
-      // has finished playing (if it doesn't loop infinitely)
-      timedProgressAnimation.isRemovedOnCompletion = true
-
+    if CALayer.usesBackgroundThread {
       DispatchQueue.main.async {
-        self.add(timedProgressAnimation, forKey: #keyPath(animationProgress))
-        // if DEBUG
-
         let count = DispatchQueue.main.getSpecific(key: AnimationDispatchKeys.finishedSetupCount) ?? 0
         DispatchQueue.main.setSpecific(
           key: AnimationDispatchKeys.finishedSetupCount,
           value: count + 1
         )
       }
+    } else {
+      let animationProgressTracker = CABasicAnimation(keyPath: #keyPath(animationProgress))
+      animationProgressTracker.fromValue = 0
+      animationProgressTracker.toValue = 1
+
+      let timedProgressAnimation = animationProgressTracker.timed(with: context, for: self)
+      timedProgressAnimation.delegate = currentAnimationConfiguration?.animationContext.closure
+
+      // Remove the progress animation once complete so we know when the animation
+      // has finished playing (if it doesn't loop infinitely)
+      timedProgressAnimation.isRemovedOnCompletion = true
+
+      add(timedProgressAnimation, forKey: #keyPath(animationProgress))
     }
   }
 

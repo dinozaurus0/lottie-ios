@@ -186,36 +186,46 @@ final class PerformanceTests: XCTestCase {
     // (e.g. render server connection, cache population), which would
     // otherwise make whichever configuration runs first look artificially
     // slower.
-    measureRenderingPerformance(of: .coreAnimation, for: animation, iterations: 1)
+    let range = (0..<iterations)
 
-//    let mainThreadEnginePerformance = measureRenderingPerformance(
-//      of: .coreAnimation,
-//      for: animation,
-//      iterations: iterations
-//    )
-
-    measureCoreAnimationBackgroundThreadPerformance(
+    measureRenderingPerformance(
       for: animation,
-      iterations: iterations,
+      with: .init(renderingEngine: .coreAnimation),
+      range: range
+    )
+
+    let mainThreadEnginePerformance = measureRenderingPerformance(
+      for: animation,
+      with: .init(renderingEngine: .coreAnimation),
+      range: range
+    )
+
+    measureCoreAnimationBackgroundPerformance(
+      for: animation,
+      range: range,
       result: { performance in
+        print(mainThreadEnginePerformance)
         print(performance)
         result(0.0)
       }
     )
   }
 
-  private func measureCoreAnimationBackgroundThreadPerformance(
+  private func measureCoreAnimationBackgroundPerformance(
     for animation: LottieAnimation,
-    iterations: Int,
+    range: Range<Int>,
     result: @escaping (Double) -> Void
   ) {
+    // We need to create them on the main thread, otherwise `UIKit` will complain about the fact that we modify an `UIView` backing layer from a thread different from the UI one.
+    let views = setupAnimationViews(
+      for: range,
+      using: animation,
+      with: .init(renderingEngine: .coreAnimationBackground)
+    )
+
     Thread {
       let performanceResult = self.measurePerformance {
-        for _ in 0..<iterations {
-          let view = self.setupAnimationView(
-            with: animation,
-            configuration: .init(renderingEngine: .coreAnimationBackground)
-          )
+        for i in range {
           // Create a flag that tracks whether the main thread has finished
           // setting up the animation for this iteration. It starts as `0`
           // and is incremented by `1` by the main thread once setup completes.
@@ -224,11 +234,13 @@ final class PerformanceTests: XCTestCase {
             value: 0
           )
 
-          view.animationLayer!.display()
+          views[i].animationLayer!.display()
 
           // Busy-wait until the main thread signals that animation setup
           // has finished for this iteration, so each `display()` call is
           // only measured once its corresponding setup is fully complete.
+
+          // TODO: See if we can obtain a more efficient way of doing this, like conditional variables. This would avoid spinning the thread
           var count = DispatchQueue.main.getSpecific(key: AnimationDispatchKeys.finishedSetupCount)
           while count! < 1 {
             count = DispatchQueue.main.getSpecific(key: AnimationDispatchKeys.finishedSetupCount)
@@ -243,17 +255,33 @@ final class PerformanceTests: XCTestCase {
 
   @discardableResult
   private func measureRenderingPerformance(
-    of engine: RenderingEngineOption,
     for animation: LottieAnimation,
-    iterations: Int
+    with configuration: LottieConfiguration,
+    range: Range<Int>
   ) -> Double {
-    measurePerformance {
-      let view = setupAnimationView(
-        with: animation,
-        configuration: .init(renderingEngine: engine)
-      )
+    let views = setupAnimationViews(
+      for: range,
+      using: animation,
+      with: configuration
+    )
 
-      for _ in 0..<iterations { view.animationLayer!.display() }
+    return measurePerformance {
+      for i in range {
+        views[i].animationLayer!.display()
+      }
+    }
+  }
+
+  private func setupAnimationViews(
+    for range: Range<Int>,
+    using animation: LottieAnimation,
+    with configuration: LottieConfiguration
+  ) -> [LottieAnimationView] {
+    range.map { _ in
+      setupAnimationView(
+        with: animation,
+        configuration: configuration
+      )
     }
   }
 
