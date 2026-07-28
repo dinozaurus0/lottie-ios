@@ -93,25 +93,18 @@ final class PerformanceTests: XCTestCase {
   }
 
   func testCoreAnimationRendererPerformance_mainVsWorkerThread() throws {
-    let expectation = XCTestExpectation(description: "Core Animation Renderer Performance")
     let animation = try XCTUnwrap(LottieAnimation.named(
       "one_circle",
       bundle: .lottie,
       subdirectory: "Samples/LottieFiles"
     ))
 
-    var actualResult: Double?
-    compareCoreAnimationRendererPerformance(
+    let ratio = compareCoreAnimationRendererPerformance(
       for: animation,
-      iterations: 100,
-      result: { result in
-        expectation.fulfill()
-        actualResult = result
-      }
+      iterations: 100
     )
 
-    wait(for: [expectation])
-    XCTAssertLessThanOrEqual(try XCTUnwrap(actualResult), 0.0)
+    XCTAssertLessThan(ratio, 1.0)
   }
 
   override func setUp() {
@@ -182,41 +175,38 @@ final class PerformanceTests: XCTestCase {
 
   private func compareCoreAnimationRendererPerformance(
     for animation: LottieAnimation,
-    iterations: Int,
-    result: @escaping (Double) -> Void
-  ) {
+    iterations: Int
+  ) -> Double {
     // Warm-up pass to avoid measuring one-time first-call setup costs
     // (e.g. render server connection, cache population), which would
     // otherwise make whichever configuration runs first look artificially
     // slower.
-    let range = (0..<iterations)
-
     measureRenderingPerformance(
       for: animation,
       with: .init(renderingEngine: .coreAnimation),
-      range: range
+      range: 0..<1
     )
 
-    let mainThreadPerformance = measureRenderingPerformance(
+    let range = (0..<iterations)
+
+    let mainThread = measureRenderingPerformance(
       for: animation,
       with: .init(renderingEngine: .coreAnimation),
       range: range
     )
 
-    measureCoreAnimationBackgroundPerformance(
+    let backgroundThread = measureCoreAnimationBackgroundPerformance(
       for: animation,
-      range: range,
-      result: { backgroundThreadPerformance in
-        result(backgroundThreadPerformance - mainThreadPerformance)
-      }
+      range: range
     )
+
+    return backgroundThread / mainThread
   }
 
   private func measureCoreAnimationBackgroundPerformance(
     for animation: LottieAnimation,
-    range: Range<Int>,
-    result: @escaping (Double) -> Void
-  ) {
+    range: Range<Int>
+  ) -> Double {
     // We need to create them on the main thread, otherwise `UIKit` will complain about the fact that we modify an `UIView` backing layer from a thread different from the UI one.
     let views = setupAnimationViews(
       for: animation,
@@ -224,34 +214,24 @@ final class PerformanceTests: XCTestCase {
       with: .init(renderingEngine: .coreAnimationBackground)
     )
 
-    Thread {
-      let performanceResult = self.measurePerformance {
-        for i in range {
-          // Create a flag that tracks whether the main thread has finished
-          // setting up the animation for this iteration. It starts as `0`
-          // and is incremented by `1` by the main thread once setup completes.
-          DispatchQueue.main.setSpecific(
-            key: AnimationDispatchKeys.finishedSetupCount,
-            value: 0
-          )
+    let expectation = expectation(description: "Core Animation Renderer Background Setup")
+    expectation.expectedFulfillmentCount = range.count * 1
 
-          views[i].animationLayer!.display()
+    CALayer.backgroundAnimationSetupComplete = {
+      expectation.fulfill()
+    }
 
-          // Busy-wait until the main thread signals that animation setup
-          // has finished for this iteration, so each `display()` call is
-          // only measured once its corresponding setup is fully complete.
-
-          // TODO: See if we can obtain a more efficient way of doing this, like conditional variables. This would avoid spinning the thread
-          var count = DispatchQueue.main.getSpecific(key: AnimationDispatchKeys.finishedSetupCount)
-          while count! < 1 {
-            count = DispatchQueue.main.getSpecific(key: AnimationDispatchKeys.finishedSetupCount)
-          }
-        }
+    let performance = measurePerformance {
+      for i in range {
+        views[i].animationLayer!.display()
       }
 
-      result(performanceResult)
+      wait(for: [expectation])
     }
-    .start()
+
+    CALayer.backgroundAnimationSetupComplete = nil
+
+    return performance
   }
 
   @discardableResult

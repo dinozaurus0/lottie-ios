@@ -314,11 +314,9 @@ final class CoreAnimationLayer: BaseAnimationLayer {
   private func setupPlaceholderAnimation(context: LayerAnimationContext) {
     if CALayer.usesBackgroundThread {
       DispatchQueue.main.async {
-        let count = DispatchQueue.main.getSpecific(key: AnimationDispatchKeys.finishedSetupCount) ?? 0
-        DispatchQueue.main.setSpecific(
-          key: AnimationDispatchKeys.finishedSetupCount,
-          value: count + 1
-        )
+        #if DEBUG
+        CALayer.backgroundAnimationSetupComplete?()
+        #endif
       }
     } else {
       let animationProgressTracker = CABasicAnimation(keyPath: #keyPath(animationProgress))
