@@ -59,32 +59,53 @@ class BaseCompositionLayer: BaseAnimationLayer {
 
   func setupLayerAnimations(context: LayerAnimationContext) throws {
     let transformContext = context.addingKeypathComponent("Transform")
+    // Add anchor point animation
+    // Add scale animation
+    // Add rotation animation
 
-    try contentsLayer.addTransformAnimations(for: baseLayerModel.transform, context: transformContext)
+    if CALayer.usesBackgroundThread {
+      DispatchQueue.global().async {
+        let positionAnimations = try! self.contentsLayer.positionAnimations(
+          from: self.baseLayerModel.transform,
+          context: transformContext
+        )
 
-    if renderLayerContents {
-      try contentsLayer.addOpacityAnimation(for: baseLayerModel.transform, context: transformContext)
-
-      try contentsLayer.addVisibilityAnimation(
-        inFrame: CGFloat(baseLayerModel.inFrame),
-        outFrame: CGFloat(baseLayerModel.outFrame),
-        context: context
-      )
-
-      // There are two different drop shadow schemas, either using `DropShadowEffect` or `DropShadowStyle`.
-      // If both happen to be present, prefer the `DropShadowEffect` (which is the drop shadow schema
-      // supported on other platforms).
-      let dropShadowEffect = baseLayerModel.effects.first(where: { $0 is DropShadowEffect }) as? DropShadowModel
-      let dropShadowStyle = baseLayerModel.styles.first(where: { $0 is DropShadowStyle }) as? DropShadowModel
-      if let dropShadowModel = dropShadowEffect ?? dropShadowStyle {
-        try contentsLayer.addDropShadowAnimations(for: dropShadowModel, context: context)
+        DispatchQueue.main.async {
+          #if DEBUG
+          for animation in positionAnimations {
+            self.contentsLayer.add(animation, forKey: "position")
+          }
+          TestHelpers.backgroundAnimationSetupComplete?()
+          #endif
+        }
       }
+    } else {
+      try contentsLayer.addTransformAnimations(for: baseLayerModel.transform, context: transformContext)
 
-      // Set up mask animations with the layer's own context (parent timeline).
-      // Mask keyframes are defined in the parent's global timeline, not the precomp's
-      // local timeline, so the mask must not receive the time-remapped child context.
-      if let maskLayer = contentsLayer.mask as? AnimationLayer {
-        try maskLayer.setupAnimations(context: context)
+      if renderLayerContents {
+        try contentsLayer.addOpacityAnimation(for: baseLayerModel.transform, context: transformContext)
+
+        try contentsLayer.addVisibilityAnimation(
+          inFrame: CGFloat(baseLayerModel.inFrame),
+          outFrame: CGFloat(baseLayerModel.outFrame),
+          context: context
+        )
+
+        // There are two different drop shadow schemas, either using `DropShadowEffect` or `DropShadowStyle`.
+        // If both happen to be present, prefer the `DropShadowEffect` (which is the drop shadow schema
+        // supported on other platforms).
+        let dropShadowEffect = baseLayerModel.effects.first(where: { $0 is DropShadowEffect }) as? DropShadowModel
+        let dropShadowStyle = baseLayerModel.styles.first(where: { $0 is DropShadowStyle }) as? DropShadowModel
+        if let dropShadowModel = dropShadowEffect ?? dropShadowStyle {
+          try contentsLayer.addDropShadowAnimations(for: dropShadowModel, context: context)
+        }
+
+        // Set up mask animations with the layer's own context (parent timeline).
+        // Mask keyframes are defined in the parent's global timeline, not the precomp's
+        // local timeline, so the mask must not receive the time-remapped child context.
+        if let maskLayer = contentsLayer.mask as? AnimationLayer {
+          try maskLayer.setupAnimations(context: context)
+        }
       }
     }
   }
