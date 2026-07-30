@@ -128,6 +128,47 @@ extension CALayer {
     }
   }
 
+  @nonobjc
+  func positionAnimations(
+    from transformModel: TransformModel,
+    context: LayerAnimationContext
+  ) throws -> [CAAnimation] {
+    if let positionKeyframes = transformModel._position {
+      return [
+        try keyframeAnimation(
+          for: .position,
+          keyframes: positionKeyframes,
+          value: \.pointValue,
+          context: context
+        )
+      ]
+    } else if
+      let xKeyframes = transformModel._positionX,
+      let yKeyframes = transformModel._positionY
+    {
+      return [
+        try keyframeAnimation(
+          for: .positionX,
+          keyframes: xKeyframes,
+          value: \.cgFloatValue,
+          context: context
+        ),
+        try keyframeAnimation(
+          for: .positionY,
+          keyframes: yKeyframes,
+          value: \.cgFloatValue,
+          context: context
+        ),
+      ]
+    } else {
+      try context.logCompatibilityIssue("""
+        `Transform` values must provide either `position` or `positionX` / `positionY` keyframes
+        """)
+    }
+
+    return []
+  }
+
   // MARK: Private
 
   @nonobjc

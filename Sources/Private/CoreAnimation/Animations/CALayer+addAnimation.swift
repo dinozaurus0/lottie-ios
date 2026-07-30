@@ -33,6 +33,29 @@ extension CALayer {
     }
   }
 
+  @nonobjc
+  func keyframeAnimation<KeyframeValue: AnyInterpolatable, ValueRepresentation>(
+    for property: LayerProperty<ValueRepresentation>,
+    keyframes: KeyframeGroup<KeyframeValue>,
+    value keyframeValueMapping: (KeyframeValue) throws -> ValueRepresentation,
+    context: LayerAnimationContext
+  ) throws -> CAAnimation {
+    if let customAnimation = try customizedAnimation(for: property, context: context) {
+      return customAnimation.timed(with: context, for: self)
+    } else if
+      let defaultAnimation = try defaultAnimation(
+        for: property,
+        keyframes: keyframes,
+        value: keyframeValueMapping,
+        context: context
+      )
+    {
+      return defaultAnimation.timed(with: context, for: self)
+    }
+    // TODO: Consider how to handle failure here? If it worth it to throw an error or return an optional?
+    return CAAnimation()
+  }
+
   // MARK: Private
 
   /// Constructs a `CAAnimation` that reflects the given keyframes
