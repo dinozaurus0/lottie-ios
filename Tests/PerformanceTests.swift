@@ -92,7 +92,7 @@ final class PerformanceTests: XCTestCase {
     }
   }
 
-  func testCoreAnimationRendererPerformance_mainVsWorkerThread() throws {
+  func testCoreAnimationRendererPerformance_mainVsBackgroundThread() throws {
     let animation = try XCTUnwrap(LottieAnimation.named(
       "one_circle",
       bundle: .lottie,
