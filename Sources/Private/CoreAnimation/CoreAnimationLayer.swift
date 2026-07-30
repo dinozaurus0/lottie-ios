@@ -320,7 +320,7 @@ final class CoreAnimationLayer: BaseAnimationLayer {
           self.add(timedProgressAnimation, forKey: #keyPath(animationProgress))
 
           #if DEBUG
-          CALayer.backgroundAnimationSetupComplete?()
+          TestHelpers.backgroundAnimationSetupComplete?()
           #endif
         }
       }

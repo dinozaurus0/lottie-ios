@@ -217,7 +217,7 @@ final class PerformanceTests: XCTestCase {
     let expectation = expectation(description: "Core Animation Renderer Background Setup")
     expectation.expectedFulfillmentCount = range.count * 1
 
-    CALayer.backgroundAnimationSetupComplete = {
+    TestHelpers.backgroundAnimationSetupComplete = {
       expectation.fulfill()
     }
 
