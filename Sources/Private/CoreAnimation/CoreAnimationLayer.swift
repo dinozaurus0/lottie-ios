@@ -313,25 +313,38 @@ final class CoreAnimationLayer: BaseAnimationLayer {
   /// realtime animation progress via `self.currentFrame`.
   private func setupPlaceholderAnimation(context: LayerAnimationContext) {
     if CALayer.usesBackgroundThread {
-      DispatchQueue.main.async {
-        #if DEBUG
-        CALayer.backgroundAnimationSetupComplete?()
-        #endif
+      DispatchQueue.global().async {
+        let timedProgressAnimation = self.timedProgressAnimation(context: context)
+
+        DispatchQueue.main.async {
+          self.add(timedProgressAnimation, forKey: #keyPath(animationProgress))
+
+          #if DEBUG
+          CALayer.backgroundAnimationSetupComplete?()
+          #endif
+        }
       }
     } else {
-      let animationProgressTracker = CABasicAnimation(keyPath: #keyPath(animationProgress))
-      animationProgressTracker.fromValue = 0
-      animationProgressTracker.toValue = 1
-
-      let timedProgressAnimation = animationProgressTracker.timed(with: context, for: self)
-      timedProgressAnimation.delegate = currentAnimationConfiguration?.animationContext.closure
-
-      // Remove the progress animation once complete so we know when the animation
-      // has finished playing (if it doesn't loop infinitely)
-      timedProgressAnimation.isRemovedOnCompletion = true
-
+      let timedProgressAnimation = timedProgressAnimation(context: context)
       add(timedProgressAnimation, forKey: #keyPath(animationProgress))
     }
+  }
+
+  private func timedProgressAnimation(
+    context: LayerAnimationContext
+  ) -> CAAnimation {
+    let animationProgressTracker = CABasicAnimation(keyPath: #keyPath(animationProgress))
+    animationProgressTracker.fromValue = 0
+    animationProgressTracker.toValue = 1
+
+    let timedProgressAnimation = animationProgressTracker.timed(with: context, for: self)
+    timedProgressAnimation.delegate = currentAnimationConfiguration?.animationContext.closure
+
+    // Remove the progress animation once complete so we know when the animation
+    // has finished playing (if it doesn't loop infinitely)
+    timedProgressAnimation.isRemovedOnCompletion = true
+
+    return timedProgressAnimation
   }
 
   /// Removes the current `CAAnimation`s, and rebuilds new animations
