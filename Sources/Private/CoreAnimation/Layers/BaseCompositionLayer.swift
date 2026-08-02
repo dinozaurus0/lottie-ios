@@ -64,6 +64,7 @@ class BaseCompositionLayer: BaseAnimationLayer {
     // Add rotation animation
 
     if CALayer.usesBackgroundThread {
+      // TODO: This is a throwing function. To preserve the semantics on this, we should aim to be able to throw an error from this branch as well
       DispatchQueue.global().async {
         let positionAnimations = try! self.contentsLayer.positionAnimations(
           from: self.baseLayerModel.transform,
@@ -71,10 +72,10 @@ class BaseCompositionLayer: BaseAnimationLayer {
         )
 
         DispatchQueue.main.async {
-          #if DEBUG
-          for animation in positionAnimations {
+          for (key, animation) in positionAnimations {
             self.contentsLayer.add(animation, forKey: "position")
           }
+          #if DEBUG
           TestHelpers.backgroundAnimationSetupComplete?()
           #endif
         }
