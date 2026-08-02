@@ -59,10 +59,10 @@ class BaseCompositionLayer: BaseAnimationLayer {
 
   func setupLayerAnimations(context: LayerAnimationContext) throws {
     let transformContext = context.addingKeypathComponent("Transform")
-    // Add anchor point animation
     // Add scale animation
     // Add rotation animation
 
+    // TODO: When more animations are transitioned, aim to extract this into multiple subfunctions
     if CALayer.usesBackgroundThread {
       // TODO: This is a throwing function. To preserve the semantics on this, we should aim to be able to throw an error from this branch as well
       DispatchQueue.global().async {
@@ -71,8 +71,15 @@ class BaseCompositionLayer: BaseAnimationLayer {
           context: transformContext
         )
 
+        let anchorPointAnimation = try! self.contentsLayer.anchorPointAnimation(
+          from: self.baseLayerModel.transform,
+          context: transformContext
+        )
+
+        let animations = positionAnimations.merging(anchorPointAnimation) { new, _ in new }
+
         DispatchQueue.main.async {
-          for (key, animation) in positionAnimations {
+          for (key, animation) in animations {
             self.contentsLayer.add(animation, forKey: "position")
           }
           #if DEBUG

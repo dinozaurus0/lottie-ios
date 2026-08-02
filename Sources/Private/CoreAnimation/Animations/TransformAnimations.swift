@@ -169,6 +169,32 @@ extension CALayer {
     return [:]
   }
 
+  @nonobjc
+  func anchorPointAnimation(
+    from transformModel: TransformModel,
+    context: LayerAnimationContext
+  ) throws -> [String?: CAAnimation] {
+    try keyframeAnimation(
+      for: .anchorPoint,
+      keyframes: transformModel.anchorPoint,
+      value: { absoluteAnchorPoint in
+        guard bounds.width > 0, bounds.height > 0 else {
+          context.logger.assertionFailure("Size must be non-zero before an animation can be played")
+          return .zero
+        }
+
+        // Lottie animation files express anchorPoint as an absolute point value,
+        // so we have to divide by the width/height of this layer to get the
+        // relative decimal values expected by Core Animation.
+        return CGPoint(
+          x: CGFloat(absoluteAnchorPoint.x) / bounds.width,
+          y: CGFloat(absoluteAnchorPoint.y) / bounds.height
+        )
+      },
+      context: context
+    )
+  }
+
   // MARK: Private
 
   @nonobjc
