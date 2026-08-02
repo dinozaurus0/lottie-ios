@@ -195,6 +195,37 @@ extension CALayer {
     )
   }
 
+  @nonobjc
+  func scaleAnimations(
+    from transformModel: TransformModel,
+    context: LayerAnimationContext
+  ) throws -> [String?: CAAnimation] {
+    try keyframeAnimation(
+      for: .scaleX,
+      keyframes: transformModel.scale,
+      value: { scale in
+        // Lottie animation files express scale as a numerical percentage value
+        // (e.g. 50%, 100%, 200%) so we divide by 100 to get the decimal values
+        // expected by Core Animation (e.g. 0.5, 1.0, 2.0).
+        CGFloat(scale.x) / 100
+      },
+      context: context
+    ).merging(
+      try keyframeAnimation(
+        for: .scaleY,
+        keyframes: transformModel.scale,
+        value: { scale in
+          // Lottie animation files express scale as a numerical percentage value
+          // (e.g. 50%, 100%, 200%) so we divide by 100 to get the decimal values
+          // expected by Core Animation (e.g. 0.5, 1.0, 2.0).
+          CGFloat(scale.y) / 100
+        },
+        context: context
+      ),
+      uniquingKeysWith: { new, _ in new }
+    )
+  }
+
   // MARK: Private
 
   @nonobjc

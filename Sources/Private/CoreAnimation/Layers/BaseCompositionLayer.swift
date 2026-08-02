@@ -76,11 +76,22 @@ class BaseCompositionLayer: BaseAnimationLayer {
           context: transformContext
         )
 
-        let animations = positionAnimations.merging(anchorPointAnimation) { new, _ in new }
+        let scaleAnimations = try! self.contentsLayer.scaleAnimations(
+          from: self.baseLayerModel.transform,
+          context: transformContext
+        )
+
+        let animations = [
+          positionAnimations,
+          anchorPointAnimation,
+          scaleAnimations,
+        ].reduce(into: [:]) { result, dict in
+          result.merge(dict) { _, new in new }
+        }
 
         DispatchQueue.main.async {
           for (key, animation) in animations {
-            self.contentsLayer.add(animation, forKey: "position")
+            self.contentsLayer.add(animation, forKey: key)
           }
           #if DEBUG
           TestHelpers.backgroundAnimationSetupComplete?()
