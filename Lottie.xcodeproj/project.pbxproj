@@ -576,6 +576,10 @@
 		19465F54282F998B00BB2C97 /* CachedImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19465F51282F998B00BB2C97 /* CachedImageProvider.swift */; };
 		20439AE0516A49FDB3BA8D42 /* LottieURLSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 135AB552F4524F1D995D3A15 /* LottieURLSession.swift */; };
 		263C0AE32E5CA0D30063205E /* AnimationConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263C0AE22E5CA0D30063205E /* AnimationConfigurationTests.swift */; };
+		2877EA23301FBC7B00E3ED1B /* Dictionary+Merging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2877EA22301FBC7B00E3ED1B /* Dictionary+Merging.swift */; };
+		2877EA24301FBC7B00E3ED1B /* Dictionary+Merging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2877EA22301FBC7B00E3ED1B /* Dictionary+Merging.swift */; };
+		2877EA25301FBC7B00E3ED1B /* Dictionary+Merging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2877EA22301FBC7B00E3ED1B /* Dictionary+Merging.swift */; };
+		2877EA26301FBC7B00E3ED1B /* Dictionary+Merging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2877EA22301FBC7B00E3ED1B /* Dictionary+Merging.swift */; };
 		288281EF30138B8D0020F5A3 /* CALayer+RenderEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 288281EE30138B8D0020F5A3 /* CALayer+RenderEngine.swift */; };
 		288281F030138B8D0020F5A3 /* CALayer+RenderEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 288281EE30138B8D0020F5A3 /* CALayer+RenderEngine.swift */; };
 		288281F130138B8D0020F5A3 /* CALayer+RenderEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 288281EE30138B8D0020F5A3 /* CALayer+RenderEngine.swift */; };
@@ -1312,6 +1316,7 @@
 		135AB552F4524F1D995D3A15 /* LottieURLSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieURLSession.swift; sourceTree = "<group>"; };
 		19465F51282F998B00BB2C97 /* CachedImageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedImageProvider.swift; sourceTree = "<group>"; };
 		263C0AE22E5CA0D30063205E /* AnimationConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationConfigurationTests.swift; sourceTree = "<group>"; };
+		2877EA22301FBC7B00E3ED1B /* Dictionary+Merging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Merging.swift"; sourceTree = "<group>"; };
 		288281EE30138B8D0020F5A3 /* CALayer+RenderEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CALayer+RenderEngine.swift"; sourceTree = "<group>"; };
 		289B884C3012760000E1D0B0 /* AnimationDispatchKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationDispatchKeys.swift; sourceTree = "<group>"; };
 		2E044E262820536800FA773B /* AutomaticEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomaticEngineTests.swift; sourceTree = "<group>"; };
@@ -2260,6 +2265,7 @@
 				2E9C95C42822F43100677516 /* StringExtensions.swift */,
 				2E9C95C52822F43100677516 /* DataExtension.swift */,
 				2E9C95C62822F43100677516 /* MathKit.swift */,
+				2877EA22301FBC7B00E3ED1B /* Dictionary+Merging.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -2927,6 +2933,7 @@
 				080DF00B2A95713000BE2D96 /* LayerFontProvider.swift in Sources */,
 				080DF0812A95718200BE2D96 /* LottieAnimationSource.swift in Sources */,
 				080DEFF82A95712400BE2D96 /* OpacityAnimation.swift in Sources */,
+				2877EA24301FBC7B00E3ED1B /* Dictionary+Merging.swift in Sources */,
 				080DF0612A95716D00BE2D96 /* DropShadowEffect.swift in Sources */,
 				080DF06C2A95717900BE2D96 /* CGFloatExtensions.swift in Sources */,
 				080DF0312A95714D00BE2D96 /* ShapeContainerLayer.swift in Sources */,
@@ -3170,6 +3177,7 @@
 				2E9C96EA2822F43100677516 /* SolidLayer.swift in Sources */,
 				08E207302A56014E002DCE17 /* WillDisplayProviding.swift in Sources */,
 				08E207482A56014E002DCE17 /* AnimatedProviding.swift in Sources */,
+				2877EA23301FBC7B00E3ED1B /* Dictionary+Merging.swift in Sources */,
 				2EAF5AA127A0798700E00531 /* AnimationSubview.macOS.swift in Sources */,
 				57210913291073E400169699 /* RoundedCorners.swift in Sources */,
 				08E206E82A56014E002DCE17 /* EpoxyableView.swift in Sources */,
@@ -3494,6 +3502,7 @@
 				2E9C96EB2822F43100677516 /* SolidLayer.swift in Sources */,
 				0820D5C62A8BF60F007D705C /* EffectValue.swift in Sources */,
 				2EAF5AA227A0798700E00531 /* AnimationSubview.macOS.swift in Sources */,
+				2877EA25301FBC7B00E3ED1B /* Dictionary+Merging.swift in Sources */,
 				08E2073A2A56014E002DCE17 /* TraitCollectionProviding.swift in Sources */,
 				57210914291073E400169699 /* RoundedCorners.swift in Sources */,
 				2E9C96C72822F43100677516 /* GroupInterpolator.swift in Sources */,
@@ -3791,6 +3800,7 @@
 				2EAF5AA327A0798700E00531 /* AnimationSubview.macOS.swift in Sources */,
 				08E207322A56014E002DCE17 /* WillDisplayProviding.swift in Sources */,
 				08E2074A2A56014E002DCE17 /* AnimatedProviding.swift in Sources */,
+				2877EA26301FBC7B00E3ED1B /* Dictionary+Merging.swift in Sources */,
 				57210915291073E400169699 /* RoundedCorners.swift in Sources */,
 				2E9C96C82822F43100677516 /* GroupInterpolator.swift in Sources */,
 				08E206EA2A56014E002DCE17 /* EpoxyableView.swift in Sources */,
