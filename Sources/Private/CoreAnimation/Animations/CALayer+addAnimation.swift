@@ -39,9 +39,9 @@ extension CALayer {
     keyframes: KeyframeGroup<KeyframeValue>,
     value keyframeValueMapping: (KeyframeValue) throws -> ValueRepresentation,
     context: LayerAnimationContext
-  ) throws -> CAAnimation {
+  ) throws -> [String?: CAAnimation] {
     if let customAnimation = try customizedAnimation(for: property, context: context) {
-      return customAnimation.timed(with: context, for: self)
+      return [customAnimation.keyPath: customAnimation.timed(with: context, for: self)]
     } else if
       let defaultAnimation = try defaultAnimation(
         for: property,
@@ -50,10 +50,10 @@ extension CALayer {
         context: context
       )
     {
-      return defaultAnimation.timed(with: context, for: self)
+      return [property.caLayerKeypath: defaultAnimation.timed(with: context, for: self)]
     }
     // TODO: Consider how to handle failure here? If it worth it to throw an error or return an optional?
-    return CAAnimation()
+    return [nil: CAAnimation()]
   }
 
   // MARK: Private
