@@ -58,69 +58,8 @@ class BaseCompositionLayer: BaseAnimationLayer {
   }
 
   func setupLayerAnimations(context: LayerAnimationContext) throws {
-    // TODO: When more animations are transitioned, aim to extract this into multiple subfunctions
     if CALayer.usesBackgroundThread {
-      // TODO: This is a throwing function. To preserve the semantics on this, we should aim to be able to throw an error from this branch as well
-      let transformContext = context.addingKeypathComponent("Transform")
-      DispatchQueue.global().async {
-        let positionAnimations = try! self.contentsLayer.positionAnimations(
-          from: self.baseLayerModel.transform,
-          context: transformContext
-        )
-
-        let anchorPointAnimation = try! self.contentsLayer.anchorPointAnimation(
-          from: self.baseLayerModel.transform,
-          context: transformContext
-        )
-
-        let scaleAnimations = try! self.contentsLayer.scaleAnimations(
-          from: self.baseLayerModel.transform,
-          context: transformContext
-        )
-
-        let rotationAnimations = try! self.contentsLayer.rotationAnimations(
-          from: self.baseLayerModel.transform,
-          context: transformContext
-        )
-
-        var appearanceAnimations = [String?: CAAnimation]()
-        if self.renderLayerContents {
-          let opacityAnimation = try! self.contentsLayer.opacityAnimation(
-            for: self.baseLayerModel.transform,
-            context: transformContext
-          )
-
-          let visibilityAnimation = try! self.contentsLayer.visibilityAnimation(
-            inFrame: CGFloat(self.baseLayerModel.inFrame),
-            outFrame: CGFloat(self.baseLayerModel.outFrame),
-            context: context
-          )
-
-          appearanceAnimations = Dictionary.merging(
-            opacityAnimation,
-            visibilityAnimation,
-            uniquingKeysWith: { _, new in new }
-          )
-        }
-
-        let animations = Dictionary.merging(
-          positionAnimations,
-          anchorPointAnimation,
-          scaleAnimations,
-          rotationAnimations,
-          appearanceAnimations,
-          uniquingKeysWith: { _, new in new }
-        )
-
-        DispatchQueue.main.async {
-          for (key, animation) in animations {
-            self.contentsLayer.add(animation, forKey: key)
-          }
-          #if DEBUG
-          TestHelpers.backgroundAnimationSetupComplete?()
-          #endif
-        }
-      }
+      setupAnimationsOnBackgroundThread(context: context)
     } else {
       try setupAnimationsOnMainThread(context: context)
     }
@@ -141,6 +80,81 @@ class BaseCompositionLayer: BaseAnimationLayer {
   // MARK: Private
 
   private let baseLayerModel: LayerModel
+
+  // TODO: This is a throwing function. To preserve the semantics on this, we should aim to be able to throw an error from this branch as well
+  private func setupAnimationsOnBackgroundThread(
+    context: LayerAnimationContext
+  ) {
+    DispatchQueue.global().async {
+      do {
+        let animations = try self.animationOnBackgroundThread(context: context)
+
+        DispatchQueue.main.async {
+          for (key, animation) in animations {
+            self.contentsLayer.add(animation, forKey: key)
+          }
+          #if DEBUG
+          TestHelpers.backgroundAnimationSetupComplete?()
+          #endif
+        }
+      } catch { }
+    }
+  }
+
+  private func animationOnBackgroundThread(
+    context: LayerAnimationContext
+  ) throws -> [String?: CAAnimation] {
+    let transformContext = context.addingKeypathComponent("Transform")
+
+    let positionAnimations = try contentsLayer.positionAnimations(
+      from: baseLayerModel.transform,
+      context: transformContext
+    )
+
+    let anchorPointAnimation = try contentsLayer.anchorPointAnimation(
+      from: baseLayerModel.transform,
+      context: transformContext
+    )
+
+    let scaleAnimations = try contentsLayer.scaleAnimations(
+      from: baseLayerModel.transform,
+      context: transformContext
+    )
+
+    let rotationAnimations = try contentsLayer.rotationAnimations(
+      from: baseLayerModel.transform,
+      context: transformContext
+    )
+
+    var appearanceAnimations = [String?: CAAnimation]()
+    if renderLayerContents {
+      let opacityAnimation = try contentsLayer.opacityAnimation(
+        for: baseLayerModel.transform,
+        context: transformContext
+      )
+
+      let visibilityAnimation = try contentsLayer.visibilityAnimation(
+        inFrame: CGFloat(baseLayerModel.inFrame),
+        outFrame: CGFloat(baseLayerModel.outFrame),
+        context: context
+      )
+
+      appearanceAnimations = Dictionary.merging(
+        opacityAnimation,
+        visibilityAnimation,
+        uniquingKeysWith: { _, new in new }
+      )
+    }
+
+    return Dictionary.merging(
+      positionAnimations,
+      anchorPointAnimation,
+      scaleAnimations,
+      rotationAnimations,
+      appearanceAnimations,
+      uniquingKeysWith: { _, new in new }
+    )
+  }
 
   private func setupAnimationsOnMainThread(
     context: LayerAnimationContext
