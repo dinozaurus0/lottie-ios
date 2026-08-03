@@ -144,22 +144,25 @@ extension CALayer {
       let xKeyframes = transformModel._positionX,
       let yKeyframes = transformModel._positionY
     {
-      return
-        try keyframeAnimation(
-          for: .positionX,
-          keyframes: xKeyframes,
-          value: \.cgFloatValue,
-          context: context
-        ).merging(
-          try keyframeAnimation(
-            for: .positionY,
-            keyframes: yKeyframes,
-            value: \.cgFloatValue,
-            context: context
-          ),
-          uniquingKeysWith: { new, _ in new }
-        )
-
+      let xAnimation = try keyframeAnimation(
+        for: .positionX,
+        keyframes: xKeyframes,
+        value: \.cgFloatValue,
+        context: context
+      )
+      let yAnimation = try keyframeAnimation(
+        for: .positionY,
+        keyframes: yKeyframes,
+        value: \.cgFloatValue,
+        context: context
+      )
+        
+      return Dictionary.merging(
+        xAnimation,
+        yAnimation,
+        uniquingKeysWith: { new, _ in new
+        }
+      )
     } else {
       try context.logCompatibilityIssue("""
         `Transform` values must provide either `position` or `positionX` / `positionY` keyframes
@@ -200,7 +203,7 @@ extension CALayer {
     from transformModel: TransformModel,
     context: LayerAnimationContext
   ) throws -> [String?: CAAnimation] {
-    try keyframeAnimation(
+    let xAnimation = try keyframeAnimation(
       for: .scaleX,
       keyframes: transformModel.scale,
       value: { scale in
@@ -210,19 +213,24 @@ extension CALayer {
         CGFloat(scale.x) / 100
       },
       context: context
-    ).merging(
-      try keyframeAnimation(
-        for: .scaleY,
-        keyframes: transformModel.scale,
-        value: { scale in
-          // Lottie animation files express scale as a numerical percentage value
-          // (e.g. 50%, 100%, 200%) so we divide by 100 to get the decimal values
-          // expected by Core Animation (e.g. 0.5, 1.0, 2.0).
-          CGFloat(scale.y) / 100
-        },
-        context: context
-      ),
-      uniquingKeysWith: { new, _ in new }
+    )
+    let yAnimation = try keyframeAnimation(
+      for: .scaleY,
+      keyframes: transformModel.scale,
+      value: { scale in
+        // Lottie animation files express scale as a numerical percentage value
+        // (e.g. 50%, 100%, 200%) so we divide by 100 to get the decimal values
+        // expected by Core Animation (e.g. 0.5, 1.0, 2.0).
+        CGFloat(scale.y) / 100
+      },
+      context: context
+    )
+
+    return Dictionary.merging(
+      xAnimation,
+      yAnimation,
+      uniquingKeysWith: { new, _ in new
+      }
     )
   }
 
