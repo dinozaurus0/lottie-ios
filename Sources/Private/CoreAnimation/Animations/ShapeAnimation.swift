@@ -51,6 +51,56 @@ extension CAShapeLayer {
     }
   }
 
+  @nonobjc
+  func pathAnimation(
+    for shape: ShapeItem,
+    context: LayerAnimationContext,
+    pathMultiplier: PathMultiplier,
+    roundedCorners: RoundedCorners?
+  ) throws -> [String?: CAAnimation] {
+    switch shape {
+    case let customShape as Shape:
+      return try customShapeAnimation(
+        for: customShape.path,
+        context: context,
+        pathMultiplier: pathMultiplier,
+        roundedCorners: roundedCorners
+      )
+
+    case let combinedShape as CombinedShapeItem:
+//      try addAnimations(for: combinedShape, context: context, pathMultiplier: pathMultiplier)
+      try context.compatibilityAssert(roundedCorners == nil, """
+        Rounded corners support is not currently implemented for combined shape items
+        """)
+      return [:]
+
+    case let ellipse as Ellipse:
+//      try addAnimations(for: ellipse, context: context, pathMultiplier: pathMultiplier)
+      return [:]
+
+    case let rectangle as Rectangle:
+//      try addAnimations(
+//        for: rectangle,
+//        context: context,
+//        pathMultiplier: pathMultiplier,
+//        roundedCorners: roundedCorners
+//      )
+      return [:]
+
+    case let star as Star:
+//      try addAnimations(for: star, context: context, pathMultiplier: pathMultiplier)
+      try context.compatibilityAssert(roundedCorners == nil, """
+        Rounded corners support is currently not implemented for polygon items
+        """)
+      return [:]
+
+    default:
+      // None of the other `ShapeItem` subclasses draw a `path`
+      try context.logCompatibilityIssue("Unexpected shape type \(type(of: shape))")
+      return [:]
+    }
+  }
+
   /// Adds a `fillColor` animation for the given `Fill` object
   @nonobjc
   func addAnimations(for fill: Fill, context: LayerAnimationContext) throws {
