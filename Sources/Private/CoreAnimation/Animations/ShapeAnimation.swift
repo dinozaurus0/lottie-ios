@@ -93,11 +93,14 @@ extension CAShapeLayer {
       )
 
     case let star as Star:
-//      try addAnimations(for: star, context: context, pathMultiplier: pathMultiplier)
       try context.compatibilityAssert(roundedCorners == nil, """
         Rounded corners support is currently not implemented for polygon items
         """)
-      return [:]
+      return try polygonsAnimation(
+        for: star,
+        context: context,
+        pathMultiplier: pathMultiplier
+      )
 
     default:
       // None of the other `ShapeItem` subclasses draw a `path`
