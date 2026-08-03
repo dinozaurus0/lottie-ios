@@ -24,6 +24,26 @@ extension CAShapeLayer {
       context: context
     )
   }
+
+  @nonobjc
+  func combineShapeAnimation(
+    for combinedShapes: CombinedShapeItem,
+    context: LayerAnimationContext,
+    pathMultiplier: PathMultiplier
+  ) throws -> [String?: CAAnimation] {
+    try keyframeAnimation(
+      for: .path,
+      keyframes: combinedShapes.shapes,
+      value: { paths in
+        let combinedPath = CGMutablePath()
+        for path in paths {
+          combinedPath.addPath(path.cgPath().duplicated(times: pathMultiplier))
+        }
+        return combinedPath
+      },
+      context: context
+    )
+  }
 }
 
 // MARK: - CombinedShapeItem
