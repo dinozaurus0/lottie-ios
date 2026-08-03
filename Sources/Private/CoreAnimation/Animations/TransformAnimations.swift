@@ -156,7 +156,7 @@ extension CALayer {
         value: \.cgFloatValue,
         context: context
       )
-        
+
       return Dictionary.merging(
         xAnimation,
         yAnimation,
