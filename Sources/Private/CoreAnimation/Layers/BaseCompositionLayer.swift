@@ -86,11 +86,23 @@ class BaseCompositionLayer: BaseAnimationLayer {
           context: transformContext
         )
 
-        var opacityAnimation = [String?: CAAnimation]()
+        var appearanceAnimations = [String?: CAAnimation]()
         if self.renderLayerContents {
-          opacityAnimation = try! self.contentsLayer.opacityAnimation(
+          let opacityAnimation = try! self.contentsLayer.opacityAnimation(
             for: self.baseLayerModel.transform,
             context: transformContext
+          )
+
+          let visibilityAnimation = try! self.contentsLayer.visibilityAnimation(
+            inFrame: CGFloat(self.baseLayerModel.inFrame),
+            outFrame: CGFloat(self.baseLayerModel.outFrame),
+            context: context
+          )
+
+          appearanceAnimations = Dictionary.merging(
+            opacityAnimation,
+            visibilityAnimation,
+            uniquingKeysWith: { _, new in new }
           )
         }
 
@@ -99,7 +111,7 @@ class BaseCompositionLayer: BaseAnimationLayer {
           anchorPointAnimation,
           scaleAnimations,
           rotationAnimations,
-          opacityAnimation,
+          appearanceAnimations,
           uniquingKeysWith: { _, new in new }
         )
 
