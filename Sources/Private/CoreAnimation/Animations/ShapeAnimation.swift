@@ -85,13 +85,12 @@ extension CAShapeLayer {
       )
 
     case let rectangle as Rectangle:
-//      try addAnimations(
-//        for: rectangle,
-//        context: context,
-//        pathMultiplier: pathMultiplier,
-//        roundedCorners: roundedCorners
-//      )
-      return [:]
+      return try rectangleAnimation(
+        for: rectangle,
+        context: context,
+        pathMultiplier: pathMultiplier,
+        roundedCorners: roundedCorners
+      )
 
     case let star as Star:
 //      try addAnimations(for: star, context: context, pathMultiplier: pathMultiplier)
