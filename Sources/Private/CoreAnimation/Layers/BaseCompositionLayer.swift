@@ -58,7 +58,7 @@ class BaseCompositionLayer: BaseAnimationLayer {
   }
 
   func setupLayerAnimations(context: LayerAnimationContext) throws {
-    if CALayer.usesBackgroundThread {
+    if CALayer.isCoreAnimationBackgroundThread {
       setupAnimationsOnBackgroundThread(context: context)
     } else {
       try setupAnimationsOnMainThread(context: context)

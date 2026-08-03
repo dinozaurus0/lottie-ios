@@ -33,7 +33,7 @@ extension CALayer {
 
   /// Whether the Core Animation renderer is currently configured to create
   /// its animation on a background thread, as opposed to the main thread.
-  static var usesBackgroundThread: Bool {
+  static var isCoreAnimationBackgroundThread: Bool {
     animationSetupThread == .background
   }
 

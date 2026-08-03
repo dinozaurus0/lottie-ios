@@ -312,7 +312,7 @@ final class CoreAnimationLayer: BaseAnimationLayer {
   /// progress of this animation (between 0 and 1). This lets us provide
   /// realtime animation progress via `self.currentFrame`.
   private func setupPlaceholderAnimation(context: LayerAnimationContext) {
-    if CALayer.usesBackgroundThread {
+    if CALayer.isCoreAnimationBackgroundThread {
       DispatchQueue.global().async {
         let timedProgressAnimation = self.timedProgressAnimation(context: context)
 
