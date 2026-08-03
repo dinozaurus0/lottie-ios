@@ -226,6 +226,54 @@ extension CALayer {
     )
   }
 
+  func rotationAnimations(
+    from transformModel: TransformModel,
+    context: LayerAnimationContext
+  ) throws -> [String?: CAAnimation] {
+    let containsXRotationValues = transformModel.rotationX.keyframes.contains(where: { $0.value.cgFloatValue != 0 })
+    let containsYRotationValues = transformModel.rotationY.keyframes.contains(where: { $0.value.cgFloatValue != 0 })
+
+    // Lottie animation files express rotation in degrees
+    // (e.g. 90º, 180º, 360º) so we convert to radians to get the
+    // values expected by Core Animation (e.g. π/2, π, 2π)
+
+    let xAnimation = try keyframeAnimation(
+      for: .rotationX,
+      keyframes: transformModel.rotationX,
+      value: { rotationDegrees in
+        rotationDegrees.cgFloatValue * .pi / 180
+      },
+      context: context
+    )
+
+    let yAnimation = try keyframeAnimation(
+      for: .rotationY,
+      keyframes: transformModel.rotationY,
+      value: { rotationDegrees in
+        rotationDegrees.cgFloatValue * .pi / 180
+      },
+      context: context
+    )
+
+    let zAnimation = try keyframeAnimation(
+      for: .rotationZ,
+      keyframes: transformModel.rotationZ,
+      value: { rotationDegrees in
+        // Lottie animation files express rotation in degrees
+        // (e.g. 90º, 180º, 360º) so we convert to radians to get the
+        // values expected by Core Animation (e.g. π/2, π, 2π)
+        rotationDegrees.cgFloatValue * .pi / 180
+      },
+      context: context
+    )
+
+    return Dictionary.merging(
+      xAnimation,
+      yAnimation,
+      zAnimation
+    ) { new, _ in new }
+  }
+
   // MARK: Private
 
   @nonobjc

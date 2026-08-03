@@ -59,7 +59,7 @@ class BaseCompositionLayer: BaseAnimationLayer {
 
   func setupLayerAnimations(context: LayerAnimationContext) throws {
     let transformContext = context.addingKeypathComponent("Transform")
-    // Add scale animation
+
     // Add rotation animation
 
     // TODO: When more animations are transitioned, aim to extract this into multiple subfunctions
@@ -81,10 +81,16 @@ class BaseCompositionLayer: BaseAnimationLayer {
           context: transformContext
         )
 
+        let rotationAnimations = try! self.contentsLayer.rotationAnimations(
+          from: self.baseLayerModel.transform,
+          context: transformContext
+        )
+
         let animations = [
           positionAnimations,
           anchorPointAnimation,
           scaleAnimations,
+          rotationAnimations,
         ].reduce(into: [:]) { result, dict in
           result.merge(dict) { _, new in new }
         }
