@@ -86,11 +86,20 @@ class BaseCompositionLayer: BaseAnimationLayer {
           context: transformContext
         )
 
+        var opacityAnimation = [String?: CAAnimation]()
+        if self.renderLayerContents {
+          opacityAnimation = try! self.contentsLayer.opacityAnimation(
+            for: self.baseLayerModel.transform,
+            context: transformContext
+          )
+        }
+
         let animations = Dictionary.merging(
           positionAnimations,
           anchorPointAnimation,
           scaleAnimations,
           rotationAnimations,
+          opacityAnimation,
           uniquingKeysWith: { _, new in new }
         )
 
