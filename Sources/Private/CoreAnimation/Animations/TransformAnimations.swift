@@ -238,9 +238,6 @@ extension CALayer {
     from transformModel: TransformModel,
     context: LayerAnimationContext
   ) throws -> [String?: CAAnimation] {
-    let containsXRotationValues = transformModel.rotationX.keyframes.contains(where: { $0.value.cgFloatValue != 0 })
-    let containsYRotationValues = transformModel.rotationY.keyframes.contains(where: { $0.value.cgFloatValue != 0 })
-
     // Lottie animation files express rotation in degrees
     // (e.g. 90º, 180º, 360º) so we convert to radians to get the
     // values expected by Core Animation (e.g. π/2, π, 2π)
