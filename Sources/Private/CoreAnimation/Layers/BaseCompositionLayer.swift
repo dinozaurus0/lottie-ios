@@ -87,7 +87,7 @@ class BaseCompositionLayer: BaseAnimationLayer {
   ) {
     DispatchQueue.global().async {
       do {
-        let animations = try self.animationOnBackgroundThread(context: context)
+        let animations = try self.animationsOnBackgroundThread(context: context)
 
         DispatchQueue.main.async {
           for (key, animation) in animations {
@@ -101,7 +101,7 @@ class BaseCompositionLayer: BaseAnimationLayer {
     }
   }
 
-  private func animationOnBackgroundThread(
+  private func animationsOnBackgroundThread(
     context: LayerAnimationContext
   ) throws -> [String?: CAAnimation] {
     let transformContext = context.addingKeypathComponent("Transform")
