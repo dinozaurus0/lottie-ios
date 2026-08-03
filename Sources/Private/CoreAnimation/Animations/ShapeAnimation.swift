@@ -143,7 +143,12 @@ extension CAShapeLayer {
       context: context
     )
 
-    return Dictionary.merging(fillAnimation, opacityAnimation, uniquingKeysWith: { _, new in new })
+    return Dictionary.merging(
+      fillAnimation,
+      opacityAnimation,
+      uniquingKeysWith: { _, new in new
+      }
+    )
   }
 
   /// Adds animations for `strokeStart` and `strokeEnd` from the given `Trim` object

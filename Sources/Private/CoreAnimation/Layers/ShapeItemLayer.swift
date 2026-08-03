@@ -287,7 +287,7 @@ final class ShapeItemLayer: BaseAnimationLayer {
     shapeLayer: CAShapeLayer,
     context: LayerAnimationContext
   ) throws -> [String?: CAAnimation] {
-    try? shapeLayer.addAnimations(
+    let pathAnimation = try shapeLayer.pathAnimation(
       for: shape.item,
       context: context.for(shape),
       // TODO: When the entire method is to be moved this should be created from trimPathMultiplier. If not possible, default to 1.
@@ -303,7 +303,12 @@ final class ShapeItemLayer: BaseAnimationLayer {
       )
     }
 
-    return Dictionary.merging(fillAnimation, uniquingKeysWith: { _, new in new })
+    return Dictionary.merging(
+      pathAnimation,
+      fillAnimation,
+      uniquingKeysWith: { _, new in new
+      }
+    )
   }
 
   private func setupGradientFillAnimations(
