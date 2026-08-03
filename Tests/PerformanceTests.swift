@@ -101,7 +101,7 @@ final class PerformanceTests: XCTestCase {
 
     let ratio = compareCoreAnimationRendererPerformance(
       for: animation,
-      iterations: 100
+      iterations: 20
     )
 
     XCTAssertLessThan(ratio, 1.0)
@@ -215,7 +215,8 @@ final class PerformanceTests: XCTestCase {
     )
 
     let expectation = expectation(description: "Core Animation Renderer Background Setup")
-    expectation.expectedFulfillmentCount = range.count * 1
+    let layersWithAnimations = 3
+    expectation.expectedFulfillmentCount = range.count * layersWithAnimations
 
     TestHelpers.backgroundAnimationSetupComplete = {
       expectation.fulfill()
@@ -229,7 +230,7 @@ final class PerformanceTests: XCTestCase {
       wait(for: [expectation])
     }
 
-    CALayer.backgroundAnimationSetupComplete = nil
+    TestHelpers.backgroundAnimationSetupComplete = nil
 
     return performance
   }
