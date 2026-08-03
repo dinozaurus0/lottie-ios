@@ -221,6 +221,7 @@ final class ShapeItemLayer: BaseAnimationLayer {
     context: LayerAnimationContext
   ) throws {
     if CALayer.usesBackgroundThread {
+      setupFillAnimationsOnBackgroundThread(shapeLayer: shapeLayer, context: context)
     } else {
       try setupFillAnimationsOnMainThread(shapeLayer: shapeLayer, context: context)
     }
@@ -257,6 +258,52 @@ final class ShapeItemLayer: BaseAnimationLayer {
     if let (stroke, context) = otherItems.first(Stroke.self, context: context) {
       try shapeLayer.addStrokeAnimations(for: stroke, context: context)
     }
+  }
+
+  private func setupFillAnimationsOnBackgroundThread(
+    shapeLayer: CAShapeLayer,
+    context: LayerAnimationContext
+  ) {
+    DispatchQueue.global().async {
+      do {
+        let animations = try self.fillAnimationsOnBackgroundThread(
+          shapeLayer: shapeLayer,
+          context: context
+        )
+
+        DispatchQueue.main.async {
+          for (key, animation) in animations {
+            shapeLayer.add(animation, forKey: key)
+          }
+          #if DEBUG
+          TestHelpers.backgroundAnimationSetupComplete?()
+          #endif
+        }
+      } catch { }
+    }
+  }
+
+  private func fillAnimationsOnBackgroundThread(
+    shapeLayer: CAShapeLayer,
+    context: LayerAnimationContext
+  ) throws -> [String?: CAAnimation] {
+    try? shapeLayer.addAnimations(
+      for: shape.item,
+      context: context.for(shape),
+      // TODO: When the entire method is to be moved this should be created from trimPathMultiplier. If not possible, default to 1.
+      pathMultiplier: 1,
+      roundedCorners: otherItems.first(RoundedCorners.self)
+    )
+
+    var fillAnimation = [String?: CAAnimation]()
+    if let (fill, context) = otherItems.first(Fill.self, context: context) {
+      fillAnimation = try shapeLayer.fillColorAnimation(
+        for: fill,
+        context: context
+      )
+    }
+
+    return Dictionary.merging(fillAnimation, uniquingKeysWith: { _, new in new })
   }
 
   private func setupGradientFillAnimations(
