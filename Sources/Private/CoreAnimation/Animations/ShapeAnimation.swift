@@ -78,8 +78,11 @@ extension CAShapeLayer {
       )
 
     case let ellipse as Ellipse:
-//      try addAnimations(for: ellipse, context: context, pathMultiplier: pathMultiplier)
-      return [:]
+      return try ellipseAnimation(
+        for: ellipse,
+        context: context,
+        pathMultiplier: pathMultiplier
+      )
 
     case let rectangle as Rectangle:
 //      try addAnimations(
