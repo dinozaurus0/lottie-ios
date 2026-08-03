@@ -106,7 +106,7 @@ class BaseCompositionLayer: BaseAnimationLayer {
   ) throws -> [String?: CAAnimation] {
     let transformContext = context.addingKeypathComponent("Transform")
 
-    let positionAnimations = try contentsLayer.positionAnimations(
+    let positionAnimation = try contentsLayer.positionAnimations(
       from: baseLayerModel.transform,
       context: transformContext
     )
@@ -116,17 +116,17 @@ class BaseCompositionLayer: BaseAnimationLayer {
       context: transformContext
     )
 
-    let scaleAnimations = try contentsLayer.scaleAnimations(
+    let scaleAnimation = try contentsLayer.scaleAnimations(
       from: baseLayerModel.transform,
       context: transformContext
     )
 
-    let rotationAnimations = try contentsLayer.rotationAnimations(
+    let rotationAnimation = try contentsLayer.rotationAnimations(
       from: baseLayerModel.transform,
       context: transformContext
     )
 
-    var appearanceAnimations = [String?: CAAnimation]()
+    var appearanceAnimation = [String?: CAAnimation]()
     if renderLayerContents {
       let opacityAnimation = try contentsLayer.opacityAnimation(
         for: baseLayerModel.transform,
@@ -139,7 +139,7 @@ class BaseCompositionLayer: BaseAnimationLayer {
         context: context
       )
 
-      appearanceAnimations = Dictionary.merging(
+      appearanceAnimation = Dictionary.merging(
         opacityAnimation,
         visibilityAnimation,
         uniquingKeysWith: { _, new in new }
@@ -147,11 +147,11 @@ class BaseCompositionLayer: BaseAnimationLayer {
     }
 
     return Dictionary.merging(
-      positionAnimations,
+      positionAnimation,
       anchorPointAnimation,
-      scaleAnimations,
-      rotationAnimations,
-      appearanceAnimations,
+      scaleAnimation,
+      rotationAnimation,
+      appearanceAnimation,
       uniquingKeysWith: { _, new in new }
     )
   }
