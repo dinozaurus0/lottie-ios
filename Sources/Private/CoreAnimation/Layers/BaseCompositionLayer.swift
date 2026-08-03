@@ -86,14 +86,13 @@ class BaseCompositionLayer: BaseAnimationLayer {
           context: transformContext
         )
 
-        let animations = [
+        let animations = Dictionary.merging(
           positionAnimations,
           anchorPointAnimation,
           scaleAnimations,
           rotationAnimations,
-        ].reduce(into: [:]) { result, dict in
-          result.merge(dict) { _, new in new }
-        }
+          uniquingKeysWith: { _, new in new }
+        )
 
         DispatchQueue.main.async {
           for (key, animation) in animations {
