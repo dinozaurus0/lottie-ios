@@ -220,6 +220,16 @@ final class ShapeItemLayer: BaseAnimationLayer {
     shapeLayer: CAShapeLayer,
     context: LayerAnimationContext
   ) throws {
+    if CALayer.usesBackgroundThread {
+    } else {
+      try setupFillAnimationsOnMainThread(shapeLayer: shapeLayer, context: context)
+    }
+  }
+
+  private func setupFillAnimationsOnMainThread(
+    shapeLayer: CAShapeLayer,
+    context: LayerAnimationContext
+  ) throws {
     var trimPathMultiplier: PathMultiplier? = nil
     if let (trim, context) = otherItems.first(Trim.self, where: { !$0.isEmpty }, context: context) {
       trimPathMultiplier = try shapeLayer.addAnimations(for: trim, context: context)
