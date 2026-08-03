@@ -30,7 +30,7 @@ extension CAShapeLayer {
     for combinedShapes: CombinedShapeItem,
     context: LayerAnimationContext,
     pathMultiplier: PathMultiplier
-  ) throws -> [String?: CAAnimation] {
+  ) throws -> AnimationsByKey {
     try keyframeAnimation(
       for: .path,
       keyframes: combinedShapes.shapes,

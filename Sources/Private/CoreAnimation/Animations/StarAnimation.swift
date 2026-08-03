@@ -29,7 +29,7 @@ extension CAShapeLayer {
     for star: Star,
     context: LayerAnimationContext,
     pathMultiplier: PathMultiplier
-  ) throws -> [String?: CAAnimation] {
+  ) throws -> AnimationsByKey {
     switch star.starType {
     case .star:
       try starAnimation(for: star, context: context, pathMultiplier: pathMultiplier)
@@ -74,7 +74,7 @@ extension CAShapeLayer {
     for star: Star,
     context: LayerAnimationContext,
     pathMultiplier: PathMultiplier
-  ) throws -> [String?: CAAnimation] {
+  ) throws -> AnimationsByKey {
     try keyframeAnimation(
       for: .path,
       keyframes: try star.combinedKeyframes(),
@@ -126,7 +126,7 @@ extension CAShapeLayer {
     for star: Star,
     context: LayerAnimationContext,
     pathMultiplier: PathMultiplier
-  ) throws -> [String?: CAAnimation] {
+  ) throws -> AnimationsByKey {
     try keyframeAnimation(
       for: .path,
       keyframes: try star.combinedKeyframes(),

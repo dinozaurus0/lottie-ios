@@ -132,7 +132,7 @@ extension CALayer {
   func positionAnimations(
     from transformModel: TransformModel,
     context: LayerAnimationContext
-  ) throws -> [String?: CAAnimation] {
+  ) throws -> AnimationsByKey {
     if let positionKeyframes = transformModel._position {
       return try keyframeAnimation(
         for: .position,
@@ -176,7 +176,7 @@ extension CALayer {
   func anchorPointAnimation(
     from transformModel: TransformModel,
     context: LayerAnimationContext
-  ) throws -> [String?: CAAnimation] {
+  ) throws -> AnimationsByKey {
     try keyframeAnimation(
       for: .anchorPoint,
       keyframes: transformModel.anchorPoint,
@@ -202,7 +202,7 @@ extension CALayer {
   func scaleAnimations(
     from transformModel: TransformModel,
     context: LayerAnimationContext
-  ) throws -> [String?: CAAnimation] {
+  ) throws -> AnimationsByKey {
     let xAnimation = try keyframeAnimation(
       for: .scaleX,
       keyframes: transformModel.scale,
@@ -237,7 +237,7 @@ extension CALayer {
   func rotationAnimations(
     from transformModel: TransformModel,
     context: LayerAnimationContext
-  ) throws -> [String?: CAAnimation] {
+  ) throws -> AnimationsByKey {
     // Lottie animation files express rotation in degrees
     // (e.g. 90º, 180º, 360º) so we convert to radians to get the
     // values expected by Core Animation (e.g. π/2, π, 2π)

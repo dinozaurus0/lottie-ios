@@ -103,7 +103,7 @@ class BaseCompositionLayer: BaseAnimationLayer {
 
   private func animationsOnBackgroundThread(
     context: LayerAnimationContext
-  ) throws -> [String?: CAAnimation] {
+  ) throws -> AnimationsByKey {
     let transformContext = context.addingKeypathComponent("Transform")
 
     let positionAnimation = try contentsLayer.positionAnimations(
@@ -126,7 +126,7 @@ class BaseCompositionLayer: BaseAnimationLayer {
       context: transformContext
     )
 
-    var appearanceAnimation = [String?: CAAnimation]()
+    var appearanceAnimation = AnimationsByKey()
     if renderLayerContents {
       let opacityAnimation = try contentsLayer.opacityAnimation(
         for: baseLayerModel.transform,

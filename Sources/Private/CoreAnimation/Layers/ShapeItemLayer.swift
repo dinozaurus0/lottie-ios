@@ -286,7 +286,7 @@ final class ShapeItemLayer: BaseAnimationLayer {
   private func fillAnimationsOnBackgroundThread(
     shapeLayer: CAShapeLayer,
     context: LayerAnimationContext
-  ) throws -> [String?: CAAnimation] {
+  ) throws -> AnimationsByKey {
     let pathAnimation = try shapeLayer.pathAnimation(
       for: shape.item,
       context: context.for(shape),
@@ -295,7 +295,7 @@ final class ShapeItemLayer: BaseAnimationLayer {
       roundedCorners: otherItems.first(RoundedCorners.self)
     )
 
-    var fillAnimation = [String?: CAAnimation]()
+    var fillAnimation = AnimationsByKey()
     if let (fill, context) = otherItems.first(Fill.self, context: context) {
       fillAnimation = try shapeLayer.fillColorAnimation(
         for: fill,

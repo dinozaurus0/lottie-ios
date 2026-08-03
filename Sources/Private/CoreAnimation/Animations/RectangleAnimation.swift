@@ -35,7 +35,7 @@ extension CAShapeLayer {
     context: LayerAnimationContext,
     pathMultiplier: PathMultiplier,
     roundedCorners: RoundedCorners?
-  ) throws -> [String?: CAAnimation] {
+  ) throws -> AnimationsByKey {
     try keyframeAnimation(
       for: .path,
       keyframes: try rectangle.combinedKeyframes(roundedCorners: roundedCorners),

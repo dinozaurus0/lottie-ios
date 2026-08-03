@@ -66,7 +66,7 @@ extension CALayer {
     inFrame: AnimationFrameTime,
     outFrame: AnimationFrameTime,
     context: LayerAnimationContext
-  ) throws -> [String?: CAAnimation] {
+  ) throws -> AnimationsByKey {
     /// If this layer uses `complexTimeRemapping`, use the `addAnimation` codepath
     /// which uses `Keyframes.manuallyInterpolatedWithTimeRemapping`.
     if context.mustUseComplexTimeRemapping {

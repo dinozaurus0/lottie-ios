@@ -55,7 +55,7 @@ extension CALayer {
   func opacityAnimation(
     for opacity: OpacityAnimationModel,
     context: LayerAnimationContext
-  ) throws -> [String?: CAAnimation] {
+  ) throws -> AnimationsByKey {
     try keyframeAnimation(
       for: .opacity,
       keyframes: opacity.opacity,

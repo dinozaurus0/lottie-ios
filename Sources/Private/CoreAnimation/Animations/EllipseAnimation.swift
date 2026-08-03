@@ -32,7 +32,7 @@ extension CAShapeLayer {
     for ellipse: Ellipse,
     context: LayerAnimationContext,
     pathMultiplier: PathMultiplier
-  ) throws -> [String?: CAAnimation] {
+  ) throws -> AnimationsByKey {
     try keyframeAnimation(
       for: .path,
       keyframes: ellipse.combinedKeyframes(),

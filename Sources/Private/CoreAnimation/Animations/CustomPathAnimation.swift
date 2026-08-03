@@ -40,7 +40,7 @@ extension CAShapeLayer {
     pathMultiplier: PathMultiplier = 1,
     transformPath: (CGPath) -> CGPath = { $0 },
     roundedCorners: RoundedCorners? = nil
-  ) throws -> [String?: CAAnimation] {
+  ) throws -> AnimationsByKey {
     let combinedKeyframes = try BezierPathKeyframe.combining(
       path: customPath,
       cornerRadius: roundedCorners?.radius

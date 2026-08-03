@@ -57,7 +57,7 @@ extension CAShapeLayer {
     context: LayerAnimationContext,
     pathMultiplier: PathMultiplier,
     roundedCorners: RoundedCorners?
-  ) throws -> [String?: CAAnimation] {
+  ) throws -> AnimationsByKey {
     switch shape {
     case let customShape as Shape:
       return try customShapeAnimation(
@@ -128,7 +128,7 @@ extension CAShapeLayer {
   func fillColorAnimation(
     for fill: Fill,
     context: LayerAnimationContext
-  ) throws -> [String?: CAAnimation] {
+  ) throws -> AnimationsByKey {
     fillRule = fill.fillRule.caFillRule
 
     let fillAnimation = try keyframeAnimation(

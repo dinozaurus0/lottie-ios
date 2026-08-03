@@ -39,7 +39,7 @@ extension CALayer {
     keyframes: KeyframeGroup<KeyframeValue>,
     value keyframeValueMapping: (KeyframeValue) throws -> ValueRepresentation,
     context: LayerAnimationContext
-  ) throws -> [String?: CAAnimation] {
+  ) throws -> AnimationsByKey {
     if let customAnimation = try customizedAnimation(for: property, context: context) {
       return [customAnimation.keyPath: customAnimation.timed(with: context, for: self)]
     } else if
