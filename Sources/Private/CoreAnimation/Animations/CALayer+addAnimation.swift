@@ -53,7 +53,7 @@ extension CALayer {
       return [property.caLayerKeypath: defaultAnimation.timed(with: context, for: self)]
     }
     // TODO: Consider how to handle failure here? If it worth it to throw an error or return an optional?
-    return [nil: CAAnimation()]
+    return [:]
   }
 
   // MARK: Private
