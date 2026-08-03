@@ -66,6 +66,28 @@ extension CAShapeLayer {
     try addOpacityAnimation(for: fill, context: context)
   }
 
+  @nonobjc
+  func fillColorAnimation(
+    for fill: Fill,
+    context: LayerAnimationContext
+  ) throws -> [String?: CAAnimation] {
+    fillRule = fill.fillRule.caFillRule
+
+    let fillAnimation = try keyframeAnimation(
+      for: .fillColor,
+      keyframes: fill.color,
+      value: \.cgColorValue,
+      context: context
+    )
+
+    let opacityAnimation = try opacityAnimation(
+      for: fill,
+      context: context
+    )
+
+    return Dictionary.merging(fillAnimation, opacityAnimation, uniquingKeysWith: { _, new in new })
+  }
+
   /// Adds animations for `strokeStart` and `strokeEnd` from the given `Trim` object
   @nonobjc
   func addAnimations(for trim: Trim, context: LayerAnimationContext) throws -> PathMultiplier {
