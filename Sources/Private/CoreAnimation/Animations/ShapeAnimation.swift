@@ -68,11 +68,14 @@ extension CAShapeLayer {
       )
 
     case let combinedShape as CombinedShapeItem:
-//      try addAnimations(for: combinedShape, context: context, pathMultiplier: pathMultiplier)
       try context.compatibilityAssert(roundedCorners == nil, """
         Rounded corners support is not currently implemented for combined shape items
         """)
-      return [:]
+      return try combineShapeAnimation(
+        for: combinedShape,
+        context: context,
+        pathMultiplier: pathMultiplier
+      )
 
     case let ellipse as Ellipse:
 //      try addAnimations(for: ellipse, context: context, pathMultiplier: pathMultiplier)
