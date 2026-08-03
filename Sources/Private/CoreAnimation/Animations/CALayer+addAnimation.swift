@@ -186,7 +186,7 @@ extension CALayer {
       // then we can apply the keyframe value directly to the layer using KVC instead
       // of creating a `CAAnimation`.
       let currentValue = value(forKey: property.caLayerKeypath) as? ValueRepresentation
-      if property.isDefaultValue(currentValue), !CALayer.isCoreAnimationBackgroundThread {
+      if property.isDefaultValue(currentValue), !CALayer.isCreatingAnimationsInBackground {
         setValue(keyframeValue, forKeyPath: property.caLayerKeypath)
         return nil
       }

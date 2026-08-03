@@ -220,7 +220,7 @@ final class ShapeItemLayer: BaseAnimationLayer {
     shapeLayer: CAShapeLayer,
     context: LayerAnimationContext
   ) throws {
-    if CALayer.isCoreAnimationBackgroundThread {
+    if CALayer.isCreatingAnimationsInBackground {
       setupFillAnimationsOnBackgroundThread(shapeLayer: shapeLayer, context: context)
     } else {
       try setupFillAnimationsOnMainThread(shapeLayer: shapeLayer, context: context)
