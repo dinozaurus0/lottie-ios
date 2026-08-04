@@ -584,10 +584,6 @@
 		288281F030138B8D0020F5A3 /* CALayer+RenderEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 288281EE30138B8D0020F5A3 /* CALayer+RenderEngine.swift */; };
 		288281F130138B8D0020F5A3 /* CALayer+RenderEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 288281EE30138B8D0020F5A3 /* CALayer+RenderEngine.swift */; };
 		288281F230138B8D0020F5A3 /* CALayer+RenderEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 288281EE30138B8D0020F5A3 /* CALayer+RenderEngine.swift */; };
-		289B884D3012760000E1D0B0 /* AnimationDispatchKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 289B884C3012760000E1D0B0 /* AnimationDispatchKeys.swift */; };
-		289B884E3012760000E1D0B0 /* AnimationDispatchKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 289B884C3012760000E1D0B0 /* AnimationDispatchKeys.swift */; };
-		289B884F3012760000E1D0B0 /* AnimationDispatchKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 289B884C3012760000E1D0B0 /* AnimationDispatchKeys.swift */; };
-		289B88503012760000E1D0B0 /* AnimationDispatchKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 289B884C3012760000E1D0B0 /* AnimationDispatchKeys.swift */; };
 		2E044E272820536800FA773B /* AutomaticEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E044E262820536800FA773B /* AutomaticEngineTests.swift */; };
 		2E09FA0627B6CEB600BA84E5 /* HardcodedFontProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E09FA0527B6CEB600BA84E5 /* HardcodedFontProvider.swift */; };
 		2E450DAC283415D500E56D19 /* OpacityAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E450DAB283415D500E56D19 /* OpacityAnimation.swift */; };
@@ -1318,7 +1314,6 @@
 		263C0AE22E5CA0D30063205E /* AnimationConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationConfigurationTests.swift; sourceTree = "<group>"; };
 		2877EA22301FBC7B00E3ED1B /* Dictionary+Merging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Merging.swift"; sourceTree = "<group>"; };
 		288281EE30138B8D0020F5A3 /* CALayer+RenderEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CALayer+RenderEngine.swift"; sourceTree = "<group>"; };
-		289B884C3012760000E1D0B0 /* AnimationDispatchKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationDispatchKeys.swift; sourceTree = "<group>"; };
 		2E044E262820536800FA773B /* AutomaticEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomaticEngineTests.swift; sourceTree = "<group>"; };
 		2E09FA0527B6CEB600BA84E5 /* HardcodedFontProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardcodedFontProvider.swift; sourceTree = "<group>"; };
 		2E450DAB283415D500E56D19 /* OpacityAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpacityAnimation.swift; sourceTree = "<group>"; };
@@ -2164,7 +2159,6 @@
 		2E9C95962822F43100677516 /* CoreAnimation */ = {
 			isa = PBXGroup;
 			children = (
-				289B884C3012760000E1D0B0 /* AnimationDispatchKeys.swift */,
 				2E9C95972822F43100677516 /* Layers */,
 				2E9C95A62822F43100677516 /* CoreAnimationLayer.swift */,
 				2E9C95A72822F43100677516 /* CompatibilityTracker.swift */,
@@ -2919,7 +2913,6 @@
 				080DF0762A95717D00BE2D96 /* CurveVertex.swift in Sources */,
 				080DF01A2A95713800BE2D96 /* GroupOutputNode.swift in Sources */,
 				080DEF832A9570C700BE2D96 /* DotLottieCacheProvider.swift in Sources */,
-				289B884F3012760000E1D0B0 /* AnimationDispatchKeys.swift in Sources */,
 				080DEF842A9570CA00BE2D96 /* AnimationImageProvider.swift in Sources */,
 				080DF0282A95714300BE2D96 /* ValueContainer.swift in Sources */,
 				080DF0462A95715900BE2D96 /* RoundedCorners.swift in Sources */,
@@ -3149,7 +3142,6 @@
 				08C001FC2A46150D00AB54BA /* Entry+Serialization.swift in Sources */,
 				2EAF5AA727A0798700E00531 /* LottieConfiguration.swift in Sources */,
 				2E9C95D32822F43100677516 /* Fill.swift in Sources */,
-				289B88503012760000E1D0B0 /* AnimationDispatchKeys.swift in Sources */,
 				6DB3BDB8282454A6002A276D /* DictionaryInitializable.swift in Sources */,
 				08E207002A56014E002DCE17 /* UIViewConfiguringSwiftUIView.swift in Sources */,
 				08CD109C2A7C2D9F0043A1A9 /* LottiePlaybackMode.swift in Sources */,
@@ -3474,7 +3466,6 @@
 				2E9C973C2822F43100677516 /* LayerProperty.swift in Sources */,
 				2E9C95F82822F43100677516 /* Rectangle.swift in Sources */,
 				2E9C96822822F43100677516 /* FillRenderer.swift in Sources */,
-				289B884E3012760000E1D0B0 /* AnimationDispatchKeys.swift in Sources */,
 				2E9C95EC2822F43100677516 /* Repeater.swift in Sources */,
 				2EAF5AA827A0798700E00531 /* LottieConfiguration.swift in Sources */,
 				2E9C95D42822F43100677516 /* Fill.swift in Sources */,
@@ -3772,7 +3763,6 @@
 				2E9C95D52822F43100677516 /* Fill.swift in Sources */,
 				6DB3BDBA282454A6002A276D /* DictionaryInitializable.swift in Sources */,
 				2E9C96B92822F43100677516 /* NodePropertyMap.swift in Sources */,
-				289B884D3012760000E1D0B0 /* AnimationDispatchKeys.swift in Sources */,
 				2E9C976A2822F43100677516 /* VectorsExtensions.swift in Sources */,
 				08E207022A56014E002DCE17 /* UIViewConfiguringSwiftUIView.swift in Sources */,
 				08CD109E2A7C2D9F0043A1A9 /* LottiePlaybackMode.swift in Sources */,
