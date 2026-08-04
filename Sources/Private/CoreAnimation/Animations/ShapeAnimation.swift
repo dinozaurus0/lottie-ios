@@ -71,7 +71,7 @@ extension CAShapeLayer {
       try context.compatibilityAssert(roundedCorners == nil, """
         Rounded corners support is not currently implemented for combined shape items
         """)
-      return try combineShapeAnimation(
+      return try combinedShapeAnimation(
         for: combinedShape,
         context: context,
         pathMultiplier: pathMultiplier

@@ -26,7 +26,7 @@ extension CAShapeLayer {
   }
 
   @nonobjc
-  func combineShapeAnimation(
+  func combinedShapeAnimation(
     for combinedShapes: CombinedShapeItem,
     context: LayerAnimationContext,
     pathMultiplier: PathMultiplier
